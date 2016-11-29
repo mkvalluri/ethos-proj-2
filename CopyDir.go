@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"io"
+	"ethos/kernelTypes"
 )
 
 func main () {
@@ -42,12 +43,14 @@ func main () {
 		efmt.Println("Fi: IsDirectory: ", fileInfo.FileType)
 
 		if fileInfo.FileType == 1 {
-			//fileData,_ := ethos.ReadVar(fd, fileName)
-			//efmt.Println("FILEOUTPUT: ", string(fileData))
+			fileData,_ := ethos.ReadVar(fd, fileName)
+			efmt.Println("FILEOUTPUT: ", string(fileData))
+			var s kernelTypes.String = kernelTypes.String(string(fileData))
+			s.Write(fd)
 			//statusWrite := ethos.WriteVar(fd, fileName + "_Output", fileData)
 			//efmt.Println("Status:",statusWrite)
-			status := cp(path+fileName+"_Output", path+fileName)
-			efmt.Println("Copied file with status: ",status)
+			//cp(path+"_Output", path+fileName)
+			efmt.Println("Copied file with status: ")
 		}
 	}
 	syscall.Close(fd)
@@ -84,23 +87,27 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 	syscall.Close(destfd)	
 }
 
-func cp(dst, src string) error {
+func cp(dst, src string) {
 	s, err := os.Open(src)
 	if err != nil {
-		return err
+		efmt.Println("1: ",err)
+		return //err
 	}
 	// no need to check errors on read only file, we already got everything
 	// we need from the filesystem, so nothing can go wrong now.
 	defer s.Close()
-	d, err := os.Create(dst)
+	d, err := os.Create("/tmp/newnew")
 	if err != nil {
-		return err
+		efmt.Println("2: ",err)
+		return
 	}
 	if _, err := io.Copy(d, s); err != nil {
 		d.Close()
-		return err
+		efmt.Println("3: ", err)
+		return
 	}
-	return d.Close()
+	efmt.Println("4: ", d.Close())
+	return //d.Close()
 }
 
 
