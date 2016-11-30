@@ -18,13 +18,19 @@ install.minimaltd.rootfs = /var/lib/ethos/minimaltd/rootfs
 all: copyDir
 
 install: copyDir
+	ethosTypeInstall $(install.rootfs) $(install.minimaltd.rootfs) testType
 	install CopyDir $(install.rootfs)/programs
 	install CopyDir $(install.minimaltd.rootfs)/programs
 	echo -n /programs/CopyDir | ethosStringEncode > $(install.rootfs)/etc/init/console
 
-copyDir: CopyDir.go
+testType.go: testType.t
+	$(ETN2GO) . testType main $^
+
+copyDir: CopyDir.go testType.go 
 	ethosGo $^
 
 clean:
 	rm -f CopyDir
 	rm -f CopyDir.goo.ethos
+	rm -f testType.go
+	rm -rf testType/ testTypeIndex/

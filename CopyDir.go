@@ -3,111 +3,135 @@ package main
 import (
 	"ethos/efmt"
 	"ethos/syscall"
-	"ethos/ethos"
-	"log"
-	"os"
-	"io"
-	"ethos/kernelTypes"
+	"ethos/ethos"	
 )
 
 func main () {
-	ID := "COPY:"
 	path := "/user/"
+	dirName := "TestDir" 
+	//SeedData(dirName)
+ 	//ethos.RemoveDirectoryPath(path + dirName + "_Output")
+	CopyDir(path + dirName, path + dirName + "_Output")	
+}
 
-	fd, status := ethos.OpenDirectoryPath(path)
+func SeedData(name string) {
+	ID := "CopyDir:"
+	efmt.Println(ID,"Creating directory named", name)
+
+	var d1 String
+	status := d1.CreateDirectoryPath("/user/" + name, "")
 	if status != syscall.StatusOk {
-		log.Fatalf("%v Unable to open path. Error %v\n",ID, status)
+		efmt.Print("%v Unable to create source directory. Status: %v\n", ID, status)
+		return
+	}
+
+	efmt.Println(ID,"Writing first file")
+	d1 = "Hello"
+	
+	fd, s := ethos.OpenDirectoryPath("/user/" + name)
+	if s != syscall.StatusOk {
+		efmt.Print("%v Unable to open source directory. Status: %v\n", ID, s)
+	}
+	d1.WriteVar(fd, "F1")
+
+	efmt.Println(ID,"Writing second file")
+	d1 = "Hi!"
+	d1.WriteVar(fd, "F2")
+
+	syscall.Close(fd)	
+	
+	var d2 Uint32
+	efmt.Println(ID,"Creating subdirectory named IntDir")
+	status = d2.CreateDirectoryPath("/user/" + name + "/IntDir", "")
+	if status != syscall.StatusOk {
+		efmt.Print("%v Unable to create IntDir. Status: %v\n", ID, status)
+	}
+
+	fd, s = ethos.OpenDirectoryPath("/user/" + name + "/IntDir")
+	if s != syscall.StatusOk {
+		efmt.Print("%v Unable to open IntDir directory. Status: %v\n", ID, s)
 	}
 	
-	//Directory operations	
-	fileName := ""
-
-	for fileNames, status := ethos.GetNextName(fd, fileName); status == syscall.StatusOk; fileNames, status = ethos.GetNextName(fd, fileName) {
-		if status == syscall.StatusNotFound {
-			break
-		}
-
-		fileName = string (fileNames)
+	efmt.Println(ID,"Writing first int file")
+	d2 = 456
+	d2.WriteVar(fd, "SF1")
 	
-		if fileName == "." || fileName == ".." || fileName == "" {
-			continue
-		}			
+	efmt.Println(ID,"Writing second int file")
+	d2 = 555
+	d2.WriteVar(fd, "SF2")
 
-		fileInfo,status  := ethos.GetFileInformation(fd, fileName)
-			
-		if status != syscall.StatusOk {
-			log.Fatalf("%v Some error!. File: %v", ID, fileName)
-		}		
-
-		efmt.Println("Fi:", fileName)
-		efmt.Println("Fi: IsDirectory: ", fileInfo.FileType)
-
-		if fileInfo.FileType == 1 {
-			fileData,_ := ethos.ReadVar(fd, fileName)
-			efmt.Println("FILEOUTPUT: ", string(fileData))
-			var s kernelTypes.String = kernelTypes.String(string(fileData))
-			s.Write(fd)
-			//statusWrite := ethos.WriteVar(fd, fileName + "_Output", fileData)
-			//efmt.Println("Status:",statusWrite)
-			//cp(path+"_Output", path+fileName)
-			efmt.Println("Copied file with status: ")
-		}
-	}
 	syscall.Close(fd)
- 	//CopyDir(path, path + "test")
-	
 }
 
 func CopyDir(sourceDirPath string, destDirPath string) {
+	ID := "CopyDir:"
 	sourcefd, sourceStatus := ethos.OpenDirectoryPath(sourceDirPath)	
 	
 	if sourceStatus != syscall.StatusOk {
-		log.Fatalf("Unable to open source directory: %v\n", sourceDirPath)
+		efmt.Print("%v Unable to open source directory: %v\n", ID, sourceDirPath)
+		return
 	}
 		
 
-	//sourceInfo,_ := ethos.GetFileInformation(sourcefd, "") 
-
-	destTypeHash,_ := ethos.TypeNameToHash("ethosGeneratedTypes", "string")
-	destStatus := ethos.CreateDirectoryPath(destDirPath, "", destTypeHash)
+	sourceInfo,_ := ethos.GetFileInformation(sourcefd, "") 
+	_,typeName,_ := ethos.TypeHashToName(sourceInfo.TypeHash)
 	
+	destStatus := ethos.CreateDirectoryPath(destDirPath, "", sourceInfo.TypeHash)
 	if destStatus != syscall.StatusOk {
-		log.Fatalf("Unable to create dest directory: %v\nStatus: %v\n", destDirPath, destStatus)
+		efmt.Print("%v Unable to create destination directory named %v. Status: %v\n", ID, destDirPath, destStatus)
+		return
 	}
 	
 	destfd, destStatus := ethos.OpenDirectoryPath(destDirPath)
-	
 	if destStatus != syscall.StatusOk {
-		log.Fatalf("Unable to open destination directory: %v\n", destDirPath)
+		efmt.Print("%v Unable to open destination directory: %v\n", ID, destDirPath)
+		return
 	}
 
-	efmt.Println("Fi:",sourcefd,destfd)
+	elem := ""
+	efmt.Println(ID,"Looping through each file in source")
 
+	for e, s := ethos.GetNextName(sourcefd, elem); s == syscall.StatusOk; e, s = ethos.GetNextName(sourcefd, elem) {
+		if s == syscall.StatusNotFound {
+			break
+		}
+
+		elem = string(e)
+
+		if elem == "." || elem == ".." || elem == "" {
+			continue
+		}
+		
+		efmt.Println(ID, "Element:", elem)		
+		info, status := ethos.GetFileInformation(sourcefd, elem)
+		if status != syscall.StatusOk {
+			efmt.Println("%v Unable to get status for file %v. Status %v\n", ID, elem, status)
+			continue
+		}
+
+		if info.FileType == 1 {
+			efmt.Println(ID,"TypeName:",typeName)
+			if typeName == "string" {
+				var t1 String
+				t1.ReadVar(sourcefd, elem)
+				efmt.Println(ID,"Data Read:",t1)
+				t1.WriteVar(destfd, elem)		
+			}
+
+			if typeName == "uint32" {
+				var t1 Uint32
+				t1.ReadVar(sourcefd, elem)
+				efmt.Println(ID,"Data Read:",t1)
+				t1.WriteVar(destfd, elem)
+			}
+		}
+	
+		if info.FileType == 2 {
+			CopyDir(sourceDirPath + "/" + elem, destDirPath + "/" + elem)
+		}
+	} 	
+	
 	syscall.Close(sourcefd)
-	syscall.Close(destfd)	
+	syscall.Close(destfd)
 }
-
-func cp(dst, src string) {
-	s, err := os.Open(src)
-	if err != nil {
-		efmt.Println("1: ",err)
-		return //err
-	}
-	// no need to check errors on read only file, we already got everything
-	// we need from the filesystem, so nothing can go wrong now.
-	defer s.Close()
-	d, err := os.Create("/tmp/newnew")
-	if err != nil {
-		efmt.Println("2: ",err)
-		return
-	}
-	if _, err := io.Copy(d, s); err != nil {
-		d.Close()
-		efmt.Println("3: ", err)
-		return
-	}
-	efmt.Println("4: ", d.Close())
-	return //d.Close()
-}
-
 
