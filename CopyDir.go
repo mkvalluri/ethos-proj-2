@@ -42,7 +42,8 @@ func main () {
 		if fileInfo.FileType == 1 {
 			fileData,_ := ethos.ReadVar(fd, fileName)
 			efmt.Println("FILEOUTPUT: ", string(fileData))
-			ethos.WriteVar(fd, fileName + "_Output", fileData)
+			statusWrite := ethos.WriteVar(fd, fileName + "_Output", fileData)
+			efmt.Println("Status:",statusWrite)
 		}
 	}
 	syscall.Close(fd)
