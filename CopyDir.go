@@ -9,8 +9,6 @@ import (
 
 func main () {
 	ID := "COPY:"
-	efmt.Println("COPY: Hello! Murali")
-	//userName := syscall.GetUser()
 	path := "/user/"
 
 	fd, status := ethos.OpenDirectoryPath(path)
@@ -18,8 +16,7 @@ func main () {
 		log.Fatalf("%v Unable to open path. Error %v\n",ID, status)
 	}
 	
-	//Directory operations
-	
+	//Directory operations	
 	fileName := ""
 
 	for fileNames, status := ethos.GetNextName(fd, fileName); status == syscall.StatusOk; fileNames, status = ethos.GetNextName(fd, fileName) {
@@ -45,6 +42,7 @@ func main () {
 		if fileInfo.FileType == 1 {
 			fileData,_ := ethos.ReadVar(fd, fileName)
 			efmt.Println("FILEOUTPUT: ", string(fileData))
+			ethos.WriteVar(fd, fileName + "_Output", fileData)
 		}
 	}
 	syscall.Close(fd)
