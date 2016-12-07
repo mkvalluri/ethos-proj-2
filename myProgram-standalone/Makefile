@@ -16,24 +16,24 @@ install.minimaltd.rootfs = /var/lib/ethos/minimaltd/rootfs
 
 
 .PHONY: all install
-all: myProgram
+all: a_myProgram
 
-install: myProgram
+install: a_myProgram
 	ethosTypeInstall $(install.rootfs) $(install.minimaltd.rootfs) myType
-	install myProgram $(install.rootfs)/programs
-	install myProgram $(install.minimaltd.rootfs)/programs
-	echo -n /programs/myProgram | ethosStringEncode > $(install.rootfs)/etc/init/console
+	install a_myProgram $(install.rootfs)/programs
+	install a_myProgram $(install.minimaltd.rootfs)/programs
+	echo -n /programs/a_myProgram | ethosStringEncode > $(install.rootfs)/etc/init/console
 	mkdir -p $(install.rootfs)/user/nobody/myDir
 	setfattr -n user.ethos.typeHash -v $(shell egPrint myType hash MyType) $(install.rootfs)/user/nobody/myDir
 
 myType.go : myType.t
 	$(ETN2GO) . myType main $^
 
-myProgram: myProgram.go myType.go
+a_myProgram: a_myProgram.go myType.go
 	ethosGo $^ 
 
 clean:
 	rm -f myType.go
 	rm -rf myType/ myTypeIndex
-	rm -f myProgram
-	rm -f myProgram.goo.ethos
+	rm -f a_myProgram
+	rm -f a_myProgram.goo.ethos
