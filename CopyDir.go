@@ -21,7 +21,7 @@ func main() {
 	SeedData(dirName)
 	CopyDir("/user/"+dirName, "/user/"+dirName+"_Copy")
 }
-
+//used to remove the previously copied directory sub tree
 func CleanUp(dirName string) {
 	ID := "CopyDir:"
 
@@ -42,7 +42,7 @@ func CleanUp(dirName string) {
 	efmt.Println(ID, "Remove Test Directory: ", s)
 	syscall.Close(fd)
 }
-
+//used to create a new directory subtree with 2 files and two sub directories, one which has two int files in it and another which has one file of type TestType
 func SeedData(name string) {
 	ID := "CopyDir:"
 	efmt.Println(ID, "Creating directory named", name)
@@ -93,7 +93,7 @@ func SeedData(name string) {
 	d3.F2 = 656
 	d3.WriteVar(path2 + "/SF3")
 }
-
+//function to copy directory structure
 func CopyDir(sourceDirPath string, destDirPath string) {
 	ID := "CopyDir:"
 	sourcefd, sourceStatus := ethos.OpenDirectoryPath(sourceDirPath)
@@ -102,7 +102,7 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 		efmt.Print("%v Unable to open source directory: %v\n", ID, sourceDirPath)
 		return
 	}
-
+	//get type hash of the source directory to create new directory with same type hash
 	sourceInfo, _ := ethos.GetFileInformation(sourcefd, "")
 	_, typeName, _ := ethos.TypeHashToName(sourceInfo.TypeHash)
 
@@ -127,7 +127,7 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 		}
 
 		elem = string(e)
-
+	
 		if elem == "." || elem == ".." || elem == "" {
 			continue
 		}
@@ -138,23 +138,25 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 			efmt.Println("%v Unable to get status for file %v. Status %v\n", ID, elem, status)
 			continue
 		}
-		efmt.Println(ID, "TypeName:", typeName)		
+		efmt.Println(ID, "TypeName:", typeName)
+		//if the element encountered is a file(FileType=1)		
 		if info.FileType == 1 {
 			efmt.Println(ID, "TypeName:", typeName)
+			//if the file is a string file
 			if typeName == "string" {
 				var t1 String
 				t1.ReadVar(sourceDirPath + "/" + elem)
 				efmt.Println(ID, "Data Read:", t1)
 				t1.WriteVar(destDirPath + "/" + elem)
 			}
-
+			//if the file is an integer file
 			if typeName == "uint32" {
 				var t1 Uint32
 				t1.ReadVar(sourceDirPath + "/" + elem)
 				efmt.Println(ID, "Data Read:", t1)
 				t1.WriteVar(destDirPath + "/" + elem)
 			}
-
+			//if the file is of type TestType
 			if typeName == "TestType" {
 				var t1 TestType
 				t1.ReadVar(sourceDirPath + "/" + elem)
@@ -162,12 +164,12 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 				t1.WriteVar(destDirPath + "/" + elem)
 			}
 		}
-
+		//if the element is a directory(FileType=2), recursively call CopyDir to copy each file
 		if info.FileType == 2 {
 			CopyDir(sourceDirPath+"/"+elem, destDirPath+"/"+elem)
 		}
 	}
-
+	//close the source and destination directories
 	syscall.Close(sourcefd)
 	syscall.Close(destfd)
 }
