@@ -23,6 +23,10 @@ func CleanUp(dirName string) {
 	s = ethos.RemoveDirectory(fd, "IntDir")
 	efmt.Println(ID, "Remove Int Directory: ", s)
 
+	ethos.RemoveFilePath("/user/" + dirName + "/MyTypeDir/SF1")
+	s = ethos.RemoveDirectory(fd, "MyTypeDir")
+	efmt.Println(ID, "Remove MyType Directory: ", s)
+
 	ethos.RemoveFilePath("/user/" + dirName + "/F2")
 	ethos.RemoveFilePath("/user/" + dirName + "/F1")
 	fd, s = ethos.OpenDirectoryPath("/user")
@@ -67,6 +71,19 @@ func SeedData(name string) {
 	efmt.Println(ID, "Writing second int file")
 	d2 = 555
 	d2.WriteVar(path + "/SF2")
+
+	var d3 MyType
+	efmt.Println(ID, "Creating subdirectory named MyTypeDir")
+	status = d3.CreateDirectory(path+"/MyTypeDir", "")
+	if status != syscall.StatusOk {
+		efmt.Print("%v Unable to create MyTypeDir. Status: %v\n", ID, status)
+	}
+
+	path = path + "/MyTypeDir"
+	efmt.Println(ID, "Writing first MyType file")
+	d3.F1 = "Some String"
+	d3.F2 = 656
+	d2.WriteVar(path + "/SF3")
 }
 
 func CopyDir(sourceDirPath string, destDirPath string) {
@@ -125,6 +142,13 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 
 			if typeName == "uint32" {
 				var t1 Uint32
+				t1.ReadVar(sourceDirPath + "/" + elem)
+				efmt.Println(ID, "Data Read:", t1)
+				t1.WriteVar(destDirPath + "/" + elem)
+			}
+
+			if typeName == "MyType" {
+				var t1 MyType
 				t1.ReadVar(sourceDirPath + "/" + elem)
 				efmt.Println(ID, "Data Read:", t1)
 				t1.WriteVar(destDirPath + "/" + elem)
