@@ -63,14 +63,14 @@ func SeedData(name string) {
 		efmt.Print("%v Unable to create IntDir. Status: %v\n", ID, status)
 	}
 
-	path = path + "/IntDir"
+	path1 := path + "/IntDir"
 	efmt.Println(ID, "Writing first int file")
 	d2 = 456
-	d2.WriteVar(path + "/SF1")
+	d2.WriteVar(path1 + "/SF1")
 
 	efmt.Println(ID, "Writing second int file")
 	d2 = 555
-	d2.WriteVar(path + "/SF2")
+	d2.WriteVar(path1 + "/SF2")
 
 	var d3 TestType
 	efmt.Println(ID, "Creating subdirectory named TestTypeDir")
@@ -79,11 +79,11 @@ func SeedData(name string) {
 		efmt.Print("%v Unable to create TestTypeDir. Status: %v\n", ID, status)
 	}
 
-	path = path + "/TestTypeDir"
+	path2 := path + "/TestTypeDir"
 	efmt.Println(ID, "Writing first TestType file")
 	d3.F1 = "Some String"
 	d3.F2 = 656
-	d2.WriteVar(path + "/SF3")
+	d2.WriteVar(path2 + "/SF3")
 }
 
 func CopyDir(sourceDirPath string, destDirPath string) {
