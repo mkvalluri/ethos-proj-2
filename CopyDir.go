@@ -96,7 +96,7 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 	elem := ""
 	efmt.Println(ID, "Looping through each file in source")
 
-	/*for e, s := ethos.GetNextName(sourcefd, elem); s == syscall.StatusOk; e, s = ethos.GetNextName(sourcefd, elem) {
+	for e, s := ethos.GetNextName(sourcefd, elem); s == syscall.StatusOk; e, s = ethos.GetNextName(sourcefd, elem) {
 		if s == syscall.StatusNotFound {
 			break
 		}
@@ -113,28 +113,28 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 			efmt.Println("%v Unable to get status for file %v. Status %v\n", ID, elem, status)
 			continue
 		}
-
+		//efmt.Println(ID, "TypeName:", typeName)
 		if info.FileType == 1 {
 			efmt.Println(ID, "TypeName:", typeName)
 			if typeName == "string" {
 				var t1 String
-				t1.ReadVar(sourcefd, elem)
+				t1.ReadVar(sourceDirPath + "/" + elem)
 				efmt.Println(ID, "Data Read:", t1)
-				t1.WriteVar(destfd, elem)
+				t1.WriteVar(destDirPath + "/" + elem)
 			}
 
 			if typeName == "uint32" {
 				var t1 Uint32
-				t1.ReadVar(sourcefd, elem)
+				t1.ReadVar(sourceDirPath + "/" + elem)
 				efmt.Println(ID, "Data Read:", t1)
-				t1.WriteVar(destfd, elem)
+				t1.WriteVar(destDirPath + "/" + elem)
 			}
 		}
 
 		if info.FileType == 2 {
 			CopyDir(sourceDirPath+"/"+elem, destDirPath+"/"+elem)
 		}
-	}*/
+	}
 
 	syscall.Close(sourcefd)
 	syscall.Close(destfd)
