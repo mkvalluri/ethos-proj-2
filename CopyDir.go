@@ -96,7 +96,7 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 	elem := ""
 	efmt.Println(ID, "Looping through each file in source")
 
-	for e, s := ethos.GetNextName(sourcefd, elem); s == syscall.StatusOk; e, s = ethos.GetNextName(sourcefd, elem) {
+	/*for e, s := ethos.GetNextName(sourcefd, elem); s == syscall.StatusOk; e, s = ethos.GetNextName(sourcefd, elem) {
 		if s == syscall.StatusNotFound {
 			break
 		}
@@ -134,7 +134,7 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 		if info.FileType == 2 {
 			CopyDir(sourceDirPath+"/"+elem, destDirPath+"/"+elem)
 		}
-	}
+	}*/
 
 	syscall.Close(sourcefd)
 	syscall.Close(destfd)
