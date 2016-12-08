@@ -23,7 +23,7 @@ func CleanUp(dirName string) {
 	s = ethos.RemoveDirectory(fd, "IntDir")
 	efmt.Println(ID, "Remove Int Directory: ", s)
 
-	ethos.RemoveFilePath("/user/" + dirName + "/TestTypeDir/SF1")
+	ethos.RemoveFilePath("/user/" + dirName + "/TestTypeDir/SF3")
 	s = ethos.RemoveDirectory(fd, "TestTypeDir")
 	efmt.Println(ID, "Remove TestType Directory: ", s)
 
