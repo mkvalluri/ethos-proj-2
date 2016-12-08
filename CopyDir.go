@@ -138,7 +138,7 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 			efmt.Println("%v Unable to get status for file %v. Status %v\n", ID, elem, status)
 			continue
 		}
-		efmt.Println(ID, "TypeName:", typeName)
+		//efmt.Println(ID, "TypeName:", typeName)
 		//if the element encountered is a file(FileType=1)		
 		if info.FileType == 1 {
 			efmt.Println(ID, "TypeName:", typeName)
