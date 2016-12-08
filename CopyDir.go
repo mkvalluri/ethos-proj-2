@@ -23,9 +23,9 @@ func CleanUp(dirName string) {
 	s = ethos.RemoveDirectory(fd, "IntDir")
 	efmt.Println(ID, "Remove Int Directory: ", s)
 
-	ethos.RemoveFilePath("/user/" + dirName + "/MyTypeDir/SF1")
-	s = ethos.RemoveDirectory(fd, "MyTypeDir")
-	efmt.Println(ID, "Remove MyType Directory: ", s)
+	ethos.RemoveFilePath("/user/" + dirName + "/TestTypeDir/SF1")
+	s = ethos.RemoveDirectory(fd, "TestTypeDir")
+	efmt.Println(ID, "Remove TestType Directory: ", s)
 
 	ethos.RemoveFilePath("/user/" + dirName + "/F2")
 	ethos.RemoveFilePath("/user/" + dirName + "/F1")
@@ -72,15 +72,15 @@ func SeedData(name string) {
 	d2 = 555
 	d2.WriteVar(path + "/SF2")
 
-	var d3 MyType
-	efmt.Println(ID, "Creating subdirectory named MyTypeDir")
-	status = d3.CreateDirectory(path+"/MyTypeDir", "")
+	var d3 TestType
+	efmt.Println(ID, "Creating subdirectory named TestTypeDir")
+	status = d3.CreateDirectory(path+"/TestTypeDir", "")
 	if status != syscall.StatusOk {
-		efmt.Print("%v Unable to create MyTypeDir. Status: %v\n", ID, status)
+		efmt.Print("%v Unable to create TestTypeDir. Status: %v\n", ID, status)
 	}
 
-	path = path + "/MyTypeDir"
-	efmt.Println(ID, "Writing first MyType file")
+	path = path + "/TestTypeDir"
+	efmt.Println(ID, "Writing first TestType file")
 	d3.F1 = "Some String"
 	d3.F2 = 656
 	d2.WriteVar(path + "/SF3")
@@ -147,8 +147,8 @@ func CopyDir(sourceDirPath string, destDirPath string) {
 				t1.WriteVar(destDirPath + "/" + elem)
 			}
 
-			if typeName == "MyType" {
-				var t1 MyType
+			if typeName == "TestType" {
+				var t1 TestType
 				t1.ReadVar(sourceDirPath + "/" + elem)
 				efmt.Println(ID, "Data Read:", t1)
 				t1.WriteVar(destDirPath + "/" + elem)
