@@ -1,3 +1,11 @@
+/*****************************
+Name: CopyDir.go
+Description: Implemenation of Unix cp functionality.
+Authors: Murali Valluri (mvallu2@uic.edu), Samrudhi Nayak ()
+Date: 12/08/2016
+*****************************/
+
+
 package main
 
 import (
