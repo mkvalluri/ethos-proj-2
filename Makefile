@@ -22,8 +22,6 @@ install: copyDir
 	install CopyDir $(install.rootfs)/programs
 	install CopyDir $(install.minimaltd.rootfs)/programs
 	echo -n /programs/CopyDir | ethosStringEncode > $(install.rootfs)/etc/init/console
-	mkdir -p $(install.rootfs)/user/nobody/myDir
-	setfattr -n user.ethos.typeHash -v $(shell egPrint testType hash TestType) $(install.rootfs)/user/nobody/myDir
 
 
 testType.go: testType.t

@@ -83,7 +83,7 @@ func SeedData(name string) {
 	efmt.Println(ID, "Writing first TestType file")
 	d3.F1 = "Some String"
 	d3.F2 = 656
-	d2.WriteVar(path2 + "/SF3")
+	d3.WriteVar(path2 + "/SF3")
 }
 
 func CopyDir(sourceDirPath string, destDirPath string) {
